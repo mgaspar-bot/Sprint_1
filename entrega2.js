@@ -12,15 +12,21 @@ Crea una arrow function que, rebent un paràmetre,
  retorni un objecte amb un atribut que tingui com a valor el paràmetre rebut.
 */
 
-class obj 
+class objClass 
 {
     constructor(param)
     {
         this.param = param;
     }
-}
 
-console.log( ((param) => new obj(param)) ("Hola") );
+    toString()
+    {
+        return `Soc un obj i tinc el valor ${this.param} al atribut param`;
+    }
+}
+let creaObjIPosaParam = (param) => new objClass(param);
+let obj1 = creaObjIPosaParam("Ei!");
+console.log(`${obj1}`);
 
 /*
 - Exercici 2
@@ -48,8 +54,3 @@ persona1.dirNom();
 Escriu una function creadora d'objectes que faci instàncies
  d'una classe abstracta. Invoca-la amb diferents definicions.
 */
-
-abstract class Huma 
-{
-    
-}

@@ -31,13 +31,13 @@ Invoca una funció que retorni un valor des de dins d'una template literal.
 
 function hello(str)
 {
-    return (`${str}`);
+    return (str);
     //return (`${str} ${typeof(str)} ${typeof(`${str}`)}`);
 }
 //El ${} es una crida a una funció que converteix el que li enviis a string sembla ser
 //Si li poso un objecte a dins utilitzara el toString? Sembla que sí :)
 
-console.log(hello(true));
+console.log(`Retorn de hello: ${hello(true)}`);
 
 /*
 - Exercici 1
