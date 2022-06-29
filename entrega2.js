@@ -18,10 +18,9 @@ class objClass
     {
         this.param = param;
     }
-
     toString()
     {
-        return `Soc un obj i tinc el valor ${this.param} al atribut param`;
+        return `Soc un objClass i tinc el valor ${this.param} al atribut param`;
     }
 }
 let creaObjIPosaParam = (param) => new objClass(param);

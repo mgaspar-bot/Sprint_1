@@ -71,6 +71,6 @@ Crea una funció anònima autoinvocable
 igualada a una variable que mostri per consola el nom de l'usuari/ària a rebut com a paràmetre.
 */
 
-const funcioAnonimaAutoinvocable = function (nom){ console.log(nom);}("Ei") ;
+const funcioAnonimaAutoinvocable = function (nom){ console.log(nom);}("Ei");
 
 
