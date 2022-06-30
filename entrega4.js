@@ -87,17 +87,17 @@ Crea una nova funció asíncrona que cridi a una altra que retorni una
  la seva invocació.
 */
 
-async function delayedResolve( ) 
+ function delayedResolve( )  //pots usar timers fora de async functions sembla ser
 {
 	return new Promise ((res, rej) => {
-		setTimeout( res(`M'he resolt!`) , 10000000 );
+		setTimeout( () =>  res(`M'he resolt!`) , 2000 ); //el parametre callback de setTimeout ha de retornar la crida perque s'activi el timer (?)
 	} );
 }
 
 async function delayedExec ( ) 
 {
 	try
-	{
+	{   
 		const str = await delayedResolve();
 		console.log(str);
 	}
@@ -109,3 +109,18 @@ async function delayedExec ( )
 }
 
 delayedExec();
+
+/*
+- Exercici 1
+Crea una funció que retorni el doble del número que li passa com
+ a paràmetre després de 2 segons.
+Crea una altra funció que rebi tres números i calculi la suma dels 
+seus dobles fent servir la funció anterior.
+*/
+
+function doubleDelayed (num)
+{
+    let doble;
+    setTimeout( () => {doble = 2*num} , 2000);
+    return doble;
+}
