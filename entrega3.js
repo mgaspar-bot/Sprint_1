@@ -111,6 +111,34 @@ let getSalary = (empTrobat) => new Promise ( (res, rej) => {
 		res(searchResult);
 } );
 
+/*
+- Exercici 3
+Invoca la primera funció getEmployee() i després getSalary()
+ niant l'execució de les dues promises de manera que es retorni per la consola el nom de l'empleat/da i el seu salari.
+*/
 
+getEmployee(2)
+		.then( (empTrobat) => {console.log(`He trobat l'empleat ${empTrobat.name}`);
+										getSalary(empTrobat)
+																	.then( (sTrobat) => {console.log(`Te un salari de: ${sTrobat.salary}`); } ) 
+																	.catch( (err) => {console.log(err.message);}) } )
+		.catch( (err) => {console.log(err.message);} );
+ 
+/*
+- Exercici 1
+Fixa un element catch a la invocació del nivell anterior que capturi qualsevol error i el mostri per la consola.
+*/
+
+try
+{
+	getEmployee(7)
+		.then( (empTrobat) => {console.log(`He trobat l'empleat ${empTrobat.name}`);
+										getSalary(empTrobat)
+																	.then( (sTrobat) => {console.log(`Te un salari de: ${sTrobat.salary}`); } )  } );
+}
+catch(err)
+{
+	console.log(err.message);
+}
 
 
