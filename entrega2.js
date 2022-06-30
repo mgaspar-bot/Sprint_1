@@ -22,7 +22,7 @@ class objClass
         return `Soc un objClass i tinc el valor ${this.param} al atribut param`;
     }
 }
-let pasaParamAlConstrucor = (param) => new objClass(param);
+let pasaParamAlConstructor = (param) => new objClass(param);
 let obj1 = pasaParamAlConstructor("Ei!");
 console.log(`${obj1}`);
 
