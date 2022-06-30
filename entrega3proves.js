@@ -45,7 +45,10 @@ promesa22
 	.then( (unValorDeRetornAmbUnNomQualsevol) => {console.log(unValorDeRetornAmbUnNomQualsevol); } )
 	.catch( (err) => {console.log(err);} );
 
-/*Acaba antiex1*/
+/*Acaba antiex1
+no funciona com esperaria que funciones i no se pq :( 
+la promesa construida amb els parametres al reves fa exactament el mateix que la altra
+*/
 
 
 let promesa2 = new Promise( function (resolve, reject) {
