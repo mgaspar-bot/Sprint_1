@@ -51,7 +51,7 @@ la promesa construida amb els parametres al reves fa exactament el mateix que la
 */
 
 
-let promesa2 = new Promise( function (resolve, reject) {
+/*let promesa2 = new Promise( function (resolve, reject) {
 		if (numRandom >= 5)
 		{
 			resolve(`5 o mes, guanyes`);
@@ -61,12 +61,12 @@ let promesa2 = new Promise( function (resolve, reject) {
 			//reject(numRandom);
 			reject(new Error(`menys de 5, perds`));
 		}
-} );
+} );*/
 //Imagino que el que està passant es que les funcions resolve i reject TORNEN un valor que llavors
 //els callbacks de .then i .catch usen com a parametres respectivament
-promesa2
+/*promesa2
 	.then( (r) => {console.log(r);})
-	.catch( (err) => {console.log( `${err} ${typeof(err)}` )} );
+	.catch( (err) => {console.log( `${err} ${typeof(err)}` )} );*/
 //igual que els objects i el toString, si faig `${err}` (err es un objecte Error s'enten) em printa Error : "el missatge"
 
 
@@ -91,7 +91,7 @@ let arrowFunction = (param, cb) => {  //Aqui cb ("callback") es simplement un pa
 		cb(`I hadn't planned for this...`);
 }
 
-arrowFunction("bad", (param1) => { console.log(param1); } );  //Juraria que és aqui on estic definint que fa callback
+arrowFunction("bad", (param1) => { console.log(param1); } );  //Juraria que és aqui on estic definint que fa (i que és) callback
 
 /*Ojo!
 param1 != param
@@ -124,53 +124,107 @@ quan la promise del exercici 1 falli i viceversa
 pq el constructor de Promise nomes espera dos parametres, i utilitza el primer param per then i el segon param per catch
 */
 
+
 /*
 - Exercici 1
-Donats els objectes employees i salaries, crea una arrow function getEmployee() que retorni una Promise efectuant
+Donats els objectes employees i salaries, crea una arrow function 
+getEmployee() que retorni una Promise efectuant
  la cerca en l'objecte pel seu id.
 */
 
 let employees = [{
-    id: 1,
-    name: 'Linux Torvalds'
+	id: 1,
+	name: 'Linux Torvalds'
 }, {
-    id: 2,
-    name: 'Bill Gates'
+	id: 2,
+	name: 'Bill Gates'
 },{
-    id: 3,
-    name: 'Jeff Bezos'
+	id: 3,
+	name: 'Jeff Bezos'
 }];
  
 let salaries = [{
-    id: 1,
-    salary: 4000
+	id: 1,
+	salary: 4000
 }, {
-    id: 2,
-    salary: 1000
+	id: 2,
+	salary: 1000
 }, {
-    id: 3,
-    salary: 2000
+	id: 3,
+	salary: 2000
 }];
 
-let getEmployee = (obj, id) => new Promise( (cb1,cb2) => {
-    for (let actual of obj)
-    {
-        if (actual.id === id)
-        {
-            console.log(`trobat!`);
-            cb1(actual);
-            return; //puc utilitzar return sin mas per acabar?
-        }
-        console.log(`I'm in object: ${actual.id}`);
-    }
-    cb2(new Error(`No hi ha cap objecte amb aquest id`));
+let searchArrayById = (obj, id) => new Promise( (cb1,cb2) => {
+	for (let actual of obj)
+	{
+		if (actual.id === id)
+		{
+			//console.log(`trobat!`);
+			cb1(actual);
+			return; //puc utilitzar return sin mas per acabar?
+		}
+		//console.log(`I'm in object: ${actual.id}`);
+	}
+	cb2(new Error(`No hi ha cap objecte amb aquest id`));
 
 } ) ;
-let salariBuscat = getEmployee(salaries, 2);
+
+function getEmployee (id)
+{
+	return searchArrayById(employees, id);
+}
+function getSalary (id)
+{
+	return searchArrayById(salaries, id);
+}
+
+let salariBuscat = getSalary(2);
 salariBuscat
-        .then((objTrobat) => {console.log(`Salari amb id: ${objTrobat.id} i valor ${objTrobat.salary}`) ;} ) //aixo super be pero ara com recupero una referencia al objecte trobat?
-        .catch( (err) => {console.log(err.message); } );
-console.log(`${salariBuscat}`);
+		.then((objTrobat) => {console.log(`He trobar un salari amb id: ${objTrobat.id} i valor ${objTrobat.salary}`) ;} ) //aixo super be pero ara com recupero una referencia al objecte trobat?
+		.catch( (err) => {console.log(err.message); } );
+// console.log(`${salariBuscat}`); //salari buscat segueix sent una Promise
+
+let empleatBuscat = getEmployee(2);
+empleatBuscat
+		.then( (empTrobat) => {console.log(`He trobat un empleat amb id ${empTrobat.id} que es diu ${empTrobat.name}`);} )
+		.catch( (err) => {console.log(err.message)} );
+
+/*
+- Exercici 3
+Invoca la primera funció getEmployee() i després getSalary() niant
+ l'execució de les dues promises de manera que es retorni per la
+  consola el nom de l'empleat/da i el seu salari.
+*/
+
+//Com que he fet el exercici anterior raro, haig de reescriure les funcions
+//aqui. Sorry pel lio
+
+function searchInArray(array, id)
+{
+	for (let actual of array)
+	{
+		if (actual.id === id)
+		{
+			return (actual);
+		}
+	}
+	return (false);
+}
+function getEmployee2 (id) 
+{
+	let result = searchInArray(employees, id);
+	let promise = new Promise ((res,rej) => {
+		if (result === false)
+			rej(new Error(`No hi ha cap empleat amb aquest id`) );
+		else
+			res(actual);
+	} );
+	promise
+			.then( (empTrobat) => {console.log(`He trobat l'empleat amb id ${empTrobat.id}, es diu ${empTrobat.name}`); } )
+			.then( )
+			
+}
+
 
 
 
