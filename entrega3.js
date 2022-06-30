@@ -17,9 +17,8 @@ function tornaPromise()
 			reject(`menys de 5, has perdut!`);
 	} ) ;
 } 
-let promesa1 = tornaPromise();
-promesa1
-	.then( (unNomQualsevol) => {console.log(unNomQualsevol); } )
+tornaPromise()
+    .then( (unNomQualsevol) => {console.log(unNomQualsevol); } )
 	.catch( (err) => {console.log(err);} );
 
 /*
@@ -85,13 +84,16 @@ let getEmployee = (id) => new Promise ( (res, rej) => {
 	let searchResult = searchInArray(id, employees)
 	if (searchResult === false) //puc escriure-ho com !searchResult ??
 	{
-		rej( new Error( `No hi ha cap empleat amb aquest id`) );
+		rej( new Error(`No hi ha cap empleat amb aquest id`) );
 	}
 	else
 	{
 		res(searchResult);
 	}
 } );
+
+
+
 
 /*getEmployee(2)
 			.then((trobat) => {console.log(`${trobat.name}`);} )
@@ -103,13 +105,22 @@ Crea una altra arrow function getSalary()
 similar a l'anterior que rebi com a paràmetre un objecte employee i retorni el seu salari.
 */
 
-let getSalary = (empTrobat) => new Promise ( (res, rej) => { 
+let getSalary = (empTrobat) => new Promise ( (res, rej) => {
 	let searchResult = searchInArray(empTrobat.id, salaries);
 	if (searchResult === false)
-		rej(new Error(`Aquest empleat no te cap salari xD`));
+    {
+		rej(new Error(`Aquest empleat no te salari pobre`));
+    }
 	else
+    {
 		res(searchResult);
+    }
 } );
+
+//Jo diria que getEmployee i getSalary ja tornen promises:
+console.log(`Tipus d'objecte de getEmployee: ${getEmployee(2).constructor.name}`);
+console.log(`Tipus d'objecte de getSalary : ${getSalary(employees[1]).constructor.name}`);
+//sorry si no et referies a aixo
 
 /*
 - Exercici 3
@@ -117,28 +128,32 @@ Invoca la primera funció getEmployee() i després getSalary()
  niant l'execució de les dues promises de manera que es retorni per la consola el nom de l'empleat/da i el seu salari.
 */
 
-getEmployee(2)
-		.then( (empTrobat) => {console.log(`He trobat l'empleat ${empTrobat.name}`);
-										getSalary(empTrobat)
-																	.then( (sTrobat) => {console.log(`Te un salari de: ${sTrobat.salary}`); } ) 
-																	.catch( (err) => {console.log(err.message);}) } )
+getEmployee(3)
+		.then( (empTrobat) => {
+            console.log(`He trobat l'empleat ${empTrobat.name}`);
+			getSalary(empTrobat)
+                .then( (sTrobat) => {console.log(`Te un salari de: ${sTrobat.salary}`); } ) 
+                .catch( (err) => {console.log(err);} ); } )
 		.catch( (err) => {console.log(err.message);} );
  
 /*
 - Exercici 1
-Fixa un element catch a la invocació del nivell anterior que capturi qualsevol error i el mostri per la consola.
+Fixa un element catch a la invocació del nivell anterior que capturi 
+qualsevol error i el mostri per la consola.
 */
 
 try
 {
-	getEmployee(7)
-		.then( (empTrobat) => {console.log(`He trobat l'empleat ${empTrobat.name}`);
-										getSalary(empTrobat)
-																	.then( (sTrobat) => {console.log(`Te un salari de: ${sTrobat.salary}`); } )  } );
+	getEmployee(3)
+        .then( (empTrobat) => {
+            console.log(`He trobat l'empleat ${empTrobat.name}`);
+            getSalary(empTrobat)
+                .then( (sTrobat) => {console.log(`Te un salari de: ${sTrobat.salary}`); } )  } );
 }
 catch(err)
 {
-	console.log(err.message);
+	console.log(err);
 }
+
 
 
