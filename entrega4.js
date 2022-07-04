@@ -6,7 +6,6 @@ Crea una funció asíncrona que rebi un id d'empleat/da
  i getSalary() que has definit a la tasca anterior.
 */
 
-
 let employees = [{
 	id: 1,
 	name: 'Linux Torvalds'
@@ -60,7 +59,7 @@ let getSalary = (empTrobat) => new Promise ( (res, rej) => {
 	}
 	else
 	{
-		res(searchResult);
+		res(searchResult); 
 	}
 } );
 
@@ -74,11 +73,11 @@ async function printEmployee( id )
 	}
 	catch (err)
 	{
-		console.log(err.message);
+		console.log("Error del printEmployee: "+err.message);
 	}
 } 
 printEmployee(3);
-printEmployee(4);
+//printEmployee(4);
 
 /*
 - Exercici 2
@@ -132,7 +131,7 @@ function doubleDelayed (num)  //El timeout escrit aixi no funciona ni que el mat
 }*/
 
 let  doubleDelayed = (num) => new Promise( (res, rej) => {
-    setTimeout( function () { return ( res(2*num) ); } , 10000);
+    setTimeout( function () { return ( res(2*num) ); } , 2000);
 } ); 
 
 
@@ -158,4 +157,45 @@ tresDobles(1,2,3);
 
 //S'executa tot en un ordre raro pero sembla que les async les comença
 //lo primer i mentre s'espera (await) va fent altres coses
+
+/*
+- Exercici 1
+Força i captura tants errors com puguis dels nivells 1 i 2.
+*/
+
+/*Nivell 1:
+No se m'acut com forçar errors del printEmployee pq té try catch, pero si de les seves parts:
+*/
+
+getSalary(null).catch((err) => {console.log("Error forçat 1: "+err.message);} ) ; //El getSalary necessita un objecte que ja hagi trobat el getEmployee per funcionar
+
+try
+{
+    let cosa = searchInArray(2, null); //aixo tambe hauria de llencar un error, searchInArray no pot buscar en una Array inexistent
+}
+catch(error)
+{
+    console.log("Error forçat 2: "+error);
+}
+
+async function foo(){  //Si no li poses el async await, getEmployee llança un error però no es capturat (encara que estiguis en un bloc try catch)
+    try                     //Es com que async/await o el .catch són els que indiquen que cal utilitzar el callback d'errors predefinit
+    {                       //Nomes ficant-ho en un bloc try/catch el interpretador s'adona que hi ha un error (pq tornes un objecte error) pero no el captura, para l'execució
+        let o = await getEmployee(-2);
+    }
+    catch(error)
+    {
+        console.log("Error forçat 3: "+error);
+    }
+}
+getEmployee(-2).catch((err) => {console.log(err.message);} );
+foo();
+
+
+
+
+
+
+
+
 
