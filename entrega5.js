@@ -43,9 +43,6 @@ console.log("Zipped Successfully");
 /*
 - Exercici 1
 Crea una funció que imprimeixi recursivament un missatge per la consola amb demores d'un segon.
-
-- Exercici 2
-Crea una funció que llisti per la consola el contingut del directori d'usuari/ària de l'ordinador utilizant Node Child Processes.
 */
 
 function hola() 
@@ -55,20 +52,74 @@ function hola()
 };
 hola();
 
-const { spawn } = require('node:child_process');
-
 /*
-per treure els paths a userfolders:
-powershell: echo $env:USERPROFILE
-command prompt: echo %USERPROFILE%
+- Exercici 2
+Crea una funció que llisti per la consola el contingut del directori d'usuari/ària de l'ordinador utilizant Node Child Processes.
 */
-/*
-let userFolderPath;
-const getUserFolder = spawn('echo $env:USERPROFILE', ); //$env:USERPROFILE nomes funcionara en powershell
-getUserFolder.stdout.on('data', function(data) {
-    userFolderPath = `${data}`;
-});
-console.log( `${userFolderPath}` );*/
+
+const { exec } = require('child_process'); //exec obre un nou shell i executa el comando que li diguis
+//lo bo es que sé quina shell obrira en cada sistema operatiu (espero, porfa)
+
+const os = require('os').platform();
+
+if(os === 'win32')
+{
+    /*    per treure els paths a userfolders: a windows
+    powershell: echo $env:USERPROFILE
+    command prompt: echo %USERPROFILE%  */
+    exec('echo %USERPROFILE%' , function (error, stdout, stderr)  { //la shell que obre exec per defecte es el comand prompt
+        if (error)
+        {
+            console.log(error);
+            return;
+        }
+        if (stderr)
+        {
+            console.log(stderr);
+            return;
+        }
+        console.log(stdout); 
+        //la idea es que aqui (a la string stdout) tinc el path al
+        //directori que vull, pero nose com treurel del scope d'aquest callback
+        //aixi que anido un altre exec com un psicopata per executar el 
+        //comando dir en el path que acabo de trobar
+        exec(`dir ${stdout}`, function (err, stdout2, stderr2) {  //els hi fico un 2 per no liarme i saber que son diferents als d'abans
+            if (err)
+            {
+                console.log(error);
+                return;
+            }
+            if (stderr2)
+            {
+                console.log(stderr2);
+                return;
+            }
+            console.log(stdout2);
+        })
+    });
+}
+else
+{
+    exec('cd && ls -la' , function (error, stdout, stderr)  {  //en un sistema no windows, faig cd per anar al home directory, i console.log de un ls i a cascar-la
+        if (error)
+        {
+            console.log(error);
+            return;
+        }
+        if (stderr)
+        {
+            console.log(stderr);
+            return;
+        }
+        console.log(stdout);
+    });
+}
+
+//el metode amb exec funciona mentre el stdout del comando no sigui molt gran, pq lo que 
+//estas fent es guardar-te tot el output del comando en un buffer i volcar-lo de una a la consola
+//si el output fos mes gran hauries de utilitzar el spawn, que crea un child process i conecta pipes
+//als outputs. LLavorens t'ho has de muntar per llegir de streams, handle les signals i els codis d'error
+//que pugui enviar-te el child process i, en general, fer un munt de coses que no entenc
 
 
 const homedir = require('os').homedir();
@@ -83,6 +134,9 @@ fs.readdir(homedir, (err, files) => {
     //files.forEach((file) => { console.log(file); } );
 } );
 
+//aquest metode es molt mes senzill pero no utilitza el modul child_process
+
+
 /*
 - Exercici 1
 Crea una funció que creï dos fitxers codificats en hexadecimal i en base64 respectivament, a partir del fitxer del nivell 1.
@@ -90,4 +144,6 @@ Crea una funció que guardi els fitxers del punt anterior, ara encriptats amb l'
 Crea una altra funció que desencripti i descodifiqui els fitxers de l'apartat anterior tornant a generar una còpia de l'inicial.
 Inclou un README amb instruccions per a l'execució de cada part.
 */
+
+
 
