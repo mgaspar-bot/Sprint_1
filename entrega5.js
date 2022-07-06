@@ -115,6 +115,8 @@ Crea una funció que creï dos fitxers codificats en hexadecimal i en base64
 Inclou un README amb instruccions per a l'execució de cada part.
 */
 function encodeArxiu(filename) {
+    let filenameHex = filename + `hex`;   let filenamebase64 = filename + `base64`;
+    exec(`rm ${filenameHex}; rm ${filenamebase64}`); 
     fs.readFile(filename, function (err, data) {  //tota la funcio a dintre d'un readFile, segur que hi ha una forma millor
         if (err) {
             console.log(err);
@@ -127,14 +129,13 @@ function encodeArxiu(filename) {
         `);
         console.log(data.toString(`hex`));*/
 
-        let filenameHex = filename + `hex`;
+        
         fs.writeFile(filenameHex, data.toString('hex'), function (err) { //els objectes buffers es poden pasar a toString especificant un encoding i santes pasques
             if (err) {
                 console.log(err);
                 return;
             }
         });
-        let filenamebase64 = filename + `base64`;
         fs.writeFile(filenamebase64, data.toString('base64'), function (err) {
             if (err) {
                 console.log(err);
@@ -164,6 +165,7 @@ function readPromise(filename) {
 async function getDataOut(container, filename) {
     try {
         let data = await readPromise(filename);
+        console.log(data.constructor.name);
         return data;
     }
     catch (err) {
@@ -171,24 +173,44 @@ async function getDataOut(container, filename) {
     }
 }
 
-function encryptArxiu(filename) {
+async function encryptArxiu(filename) {
+    
     encodeArxiu(filename);
     let filenameHex = filename + `hex`;
-    let filenamebase64 = filename + `base64`;
-    let data;
-    data = getDataOut(data, filename);
-    exec(`rm ${filename}; rm ${filenameHex}; rm ${filenamebase64}`);
+    let filenamebase64 = filename + `base64`; 
+    let data, dataHex, datab64;
+    data = await getDataOut(data, filename);
+    dataHex = await getDataOut(dataHex, filenameHex);
+    datab64 = await getDataOut(datab64, filenamebase64); 
 
-    const hash = crypto.createHash('aes-192-cbc'); //per encriptar haig de crear un objecte Hash
-    hash.update() //TODO treure les dades dels filenames, generar el digest, escriure'l al fs i exec rm
-    //per borrar els arxius encoded
-
-    fs.writeFile(filenameHex + `hash`, , function (err) {
+    let hash = crypto.createHash('sha256'); //per encriptar haig de crear un objecte Hash
+    data = hash.update(data).digest();
+    fs.writeFile(filename + "hash", data, function (err) {
+        if (err)
+        {
+            console.log(err);
+            return;
+        }
+    });
+    hash = crypto.createHash('sha256'); //i sembla que l'haig de crear cada cop
+    dataHex = hash.update(dataHex).digest('hex');
+    fs.writeFile(filenameHex + `hash`, dataHex , function (err) {
         if (err) {
             console.log(err);
             return;
         }
     });
+    hash = crypto.createHash('sha256');
+    datab64 = hash.update(datab64).digest('base64');    
+    fs.writeFile(filenamebase64 + `hash`, datab64 , function (err) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+    });
+    exec(`rm ${filename}; rm ${filenameHex}; rm ${filenamebase64}` ); //exec funciona encara que 
+    //no li posi el callback per manejar els stdout, stderr i tal?
+
 }
 encryptArxiu('./nouArxiu.txt');
 
