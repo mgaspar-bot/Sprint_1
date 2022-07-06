@@ -14,30 +14,28 @@ const fs = require('fs');
 
 const frase = `La frase que vulguis aquí`;
 fs.writeFile('./nouArxiu.txt', frase, function (error) {
-    if (error)
-    {
+    if (error) {
         console.log(error);
         return;
     }
     console.log(`Arxiu creat amb exit`);
-} );
+});
 
 fs.readFile('./nouArxiu.txt', function (err, data) {
-    if (err)
-    {
+    if (err) {
         console.log(err);
         return;
     }
     console.log(`${data}`);
-} );
+});
 
 var zlib = require('zlib');
 
-var zip = zlib.createGzip();
+var Gzip = zlib.createGzip();
 
 var read = fs.createReadStream('./nouArxiu.txt');
 var write = fs.createWriteStream('./nouArxiu.txt.gz');
-read.pipe(zip).pipe(write);	
+read.pipe(Gzip).pipe(write);
 console.log("Zipped Successfully");
 
 /*
@@ -45,70 +43,34 @@ console.log("Zipped Successfully");
 Crea una funció que imprimeixi recursivament un missatge per la consola amb demores d'un segon.
 */
 
-function hola() 
-{
+function hola() {
     console.log(`hola!`);
     setTimeout(hola, 2000);
 };
-hola();
+//hola();
 
 /*
 - Exercici 2
 Crea una funció que llisti per la consola el contingut del directori d'usuari/ària de l'ordinador utilizant Node Child Processes.
 */
 
-const { exec } = require('child_process'); //exec obre un nou shell i executa el comando que li diguis
-//lo bo es que sé quina shell obrira en cada sistema operatiu (espero, porfa)
+const platform = require('os').platform();
+const homedir = require('os').homedir();
+const exec = require('child_process').exec;
 
-const os = require('os').platform();
-
-if(os === 'win32')
-{
-    /*    per treure els paths a userfolders: a windows
-    powershell: echo $env:USERPROFILE
-    command prompt: echo %USERPROFILE%  */
-    exec('echo %USERPROFILE%' , function (error, stdout, stderr)  { //la shell que obre exec per defecte es el comand prompt
-        if (error)
-        {
-            console.log(error);
+if (platform === 'win32') {
+    exec(`dir ${homedir}`, (err, stdout, stderr) => {
+        if (err || stderr) {
+            console.log('Ha habido algun tipo de error');
             return;
         }
-        if (stderr)
-        {
-            console.log(stderr);
-            return;
-        }
-        console.log(stdout); 
-        //la idea es que aqui (a la string stdout) tinc el path al
-        //directori que vull, pero nose com treurel del scope d'aquest callback
-        //aixi que anido un altre exec com un psicopata per executar el 
-        //comando dir en el path que acabo de trobar
-        exec(`dir ${stdout}`, function (err, stdout2, stderr2) {  //els hi fico un 2 per no liarme i saber que son diferents als d'abans
-            if (err)
-            {
-                console.log(error);
-                return;
-            }
-            if (stderr2)
-            {
-                console.log(stderr2);
-                return;
-            }
-            console.log(stdout2);
-        })
+        console.log(stdout);
     });
 }
-else
-{
-    exec('cd && ls -la' , function (error, stdout, stderr)  {  //en un sistema no windows, faig cd per anar al home directory, i console.log de un ls i a cascar-la
-        if (error)
-        {
-            console.log(error);
-            return;
-        }
-        if (stderr)
-        {
-            console.log(stderr);
+else {
+    exec(`cd && ls -la`, function (err, stdout, stderr) {
+        if (err || stderr) {
+            console.log('Ha habido algun tipo de error');
             return;
         }
         console.log(stdout);
@@ -122,28 +84,111 @@ else
 //que pugui enviar-te el child process i, en general, fer un munt de coses que no entenc
 
 
-const homedir = require('os').homedir();
-
 fs.readdir(homedir, (err, files) => {
-    if(err)
-    {
+    if (err) {
         console.log(err);
         return;
     }
+    console.log(`
+    
+    metode amb fs.readdir:
+    
+    `);
     console.log(files);
     //files.forEach((file) => { console.log(file); } );
-} );
+});
 
 //aquest metode es molt mes senzill pero no utilitza el modul child_process
 
 
 /*
 - Exercici 1
-Crea una funció que creï dos fitxers codificats en hexadecimal i en base64 respectivament, a partir del fitxer del nivell 1.
-Crea una funció que guardi els fitxers del punt anterior, ara encriptats amb l'algoritme aes-192-cbc, i esborri els fitxers inicials.
-Crea una altra funció que desencripti i descodifiqui els fitxers de l'apartat anterior tornant a generar una còpia de l'inicial.
+Crea una funció que creï dos fitxers codificats en hexadecimal i en base64
+ respectivament, a partir del fitxer del nivell 1.
+
+ Crea una funció que guardi els fitxers del punt anterior, ara encriptats 
+ amb l'algoritme aes-192-cbc, i esborri els fitxers inicials.
+
+ Crea una altra funció que desencripti i descodifiqui els fitxers de 
+ l'apartat anterior tornant a generar una còpia de l'inicial.
+
 Inclou un README amb instruccions per a l'execució de cada part.
 */
+function encodeArxiu(filename) {
+    fs.readFile(filename, function (err, data) {  //tota la funcio a dintre d'un readFile, segur que hi ha una forma millor
+        if (err) {
+            console.log(err);
+            return;
+        }
 
+        //console.log(`${typeof(data)} ${data.constructor.name}`); //data es un objecte Buffer
+        /*console.log(`
+        Data en hexa:
+        `);
+        console.log(data.toString(`hex`));*/
 
+        let filenameHex = filename + `hex`;
+        fs.writeFile(filenameHex, data.toString('hex'), function (err) { //els objectes buffers es poden pasar a toString especificant un encoding i santes pasques
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+        let filenamebase64 = filename + `base64`;
+        fs.writeFile(filenamebase64, data.toString('base64'), function (err) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+    });
+}
+encodeArxiu(`./nouArxiu.txt`);
+/*
+ Crea una funció que guardi els fitxers del punt anterior, ara encriptats 
+ amb l'algoritme aes-192-cbc, i esborri els fitxers inicials.
+*/
+const crypto = require('crypto');
+
+function readPromise(filename) {
+    return new Promise((res, rej) => {
+        fs.readFile(filename, (err, data) => { //si el read tira un error mel agafa el catch de la promise?
+            if (err) {
+                console.log(err.message);
+                rej(new Error(`Fallo la lectura`));
+            }
+            res(data);
+        });
+    });
+}
+async function getDataOut(container, filename) {
+    try {
+        let data = await readPromise(filename);
+        return data;
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+function encryptArxiu(filename) {
+    encodeArxiu(filename);
+    let filenameHex = filename + `hex`;
+    let filenamebase64 = filename + `base64`;
+    let data;
+    data = getDataOut(data, filename);
+    exec(`rm ${filename}; rm ${filenameHex}; rm ${filenamebase64}`);
+
+    const hash = crypto.createHash('aes-192-cbc'); //per encriptar haig de crear un objecte Hash
+    hash.update() //TODO treure les dades dels filenames, generar el digest, escriure'l al fs i exec rm
+    //per borrar els arxius encoded
+
+    fs.writeFile(filenameHex + `hash`, , function (err) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+    });
+}
+encryptArxiu('./nouArxiu.txt');
 
