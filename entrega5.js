@@ -12,31 +12,38 @@ Crea una funció que comprimeixi el fitxer del nivell 1.
 
 const fs = require('fs');
 
-const frase = `La frase que vulguis aquí`;
-fs.writeFile('./nouArxiu.txt', frase, function (error) {
-    if (error) {
-        console.log(error);
-        return;
-    }
-    console.log(`Arxiu creat amb exit`);
-});
 
-fs.readFile('./nouArxiu.txt', function (err, data) {
-    if (err) {
-        console.log(err);
-        return;
-    }
-    console.log(`${data}`);
-});
+function escriuArxiu(frase, filename) {
+    fs.writeFileSync(`${filename}`, frase, function (error) {
+        if (error) {
+            console.log(error);
+            return;
+        }
+        console.log(`Arxiu creat amb exit`);
+    });
+}
+
+function showArxiu(filename) {
+    fs.readFile(`${filename}`, function (err, data) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        console.log(`${data}`);
+    });
+}
 
 var zlib = require('zlib');
+function compressArxiu(filename) {
+    var Gzip = zlib.createGzip();
 
-var Gzip = zlib.createGzip();
+    var read = fs.createReadStream(filename);
+    var write = fs.createWriteStream(`${filename}.gz`);
 
-var read = fs.createReadStream('./nouArxiu.txt');
-var write = fs.createWriteStream('./nouArxiu.txt.gz');
-read.pipe(Gzip).pipe(write);
-console.log("Zipped Successfully");
+    read.pipe(Gzip).pipe(write);
+
+    console.log("Zipped Successfully");
+}
 
 /*
 - Exercici 1
@@ -45,7 +52,7 @@ Crea una funció que imprimeixi recursivament un missatge per la consola amb dem
 
 function hola() {
     console.log(`hola!`);
-    setTimeout(hola, 2000);
+    setTimeout(hola, 1000);
 };
 //hola();
 
@@ -84,7 +91,7 @@ else {
 //que pugui enviar-te el child process i, en general, fer un munt de coses que no entenc
 
 
-fs.readdir(homedir, (err, files) => {
+/* fs.readdir(homedir, (err, files) => {
     if (err) {
         console.log(err);
         return;
@@ -96,7 +103,7 @@ fs.readdir(homedir, (err, files) => {
     `);
     console.log(files);
     //files.forEach((file) => { console.log(file); } );
-});
+}); */
 
 //aquest metode es molt mes senzill pero no utilitza el modul child_process
 
@@ -104,19 +111,24 @@ fs.readdir(homedir, (err, files) => {
 /*
 - Exercici 1
 Crea una funció que creï dos fitxers codificats en hexadecimal i en base64
- respectivament, a partir del fitxer del nivell 1.
+respectivament, a partir del fitxer del nivell 1.
 
- Crea una funció que guardi els fitxers del punt anterior, ara encriptats 
- amb l'algoritme aes-192-cbc, i esborri els fitxers inicials.
+Crea una funció que guardi els fitxers del punt anterior, ara encriptats 
+amb l'algoritme aes-192-cbc, i esborri els fitxers inicials.
 
- Crea una altra funció que desencripti i descodifiqui els fitxers de 
- l'apartat anterior tornant a generar una còpia de l'inicial.
+Crea una altra funció que desencripti i descodifiqui els fitxers de 
+l'apartat anterior tornant a generar una còpia de l'inicial.
 
 Inclou un README amb instruccions per a l'execució de cada part.
 */
+
+var rmCommand; //Es una matada pero el primer que haig de fer es aixo
+if (platform === 'win32') rmCommand = `del`;
+else rmCommand = `rm`;
+
+
 function encodeArxiu(filename) {
-    let filenameHex = filename + `hex`;   let filenamebase64 = filename + `base64`;
-    exec(`rm ${filenameHex}; rm ${filenamebase64}`); 
+    let filenameHex = filename + `hex`; let filenamebase64 = filename + `base64`;
     fs.readFile(filename, function (err, data) {  //tota la funcio a dintre d'un readFile, segur que hi ha una forma millor
         if (err) {
             console.log(err);
@@ -129,7 +141,6 @@ function encodeArxiu(filename) {
         `);
         console.log(data.toString(`hex`));*/
 
-        
         fs.writeFile(filenameHex, data.toString('hex'), function (err) { //els objectes buffers es poden pasar a toString especificant un encoding i santes pasques
             if (err) {
                 console.log(err);
@@ -144,11 +155,8 @@ function encodeArxiu(filename) {
         });
     });
 }
-encodeArxiu(`./nouArxiu.txt`);
-/*
- Crea una funció que guardi els fitxers del punt anterior, ara encriptats 
- amb l'algoritme aes-192-cbc, i esborri els fitxers inicials.
-*/
+
+
 const crypto = require('crypto');
 
 function readPromise(filename) {
@@ -165,52 +173,72 @@ function readPromise(filename) {
 async function getDataOut(container, filename) {
     try {
         let data = await readPromise(filename);
-        console.log(data.constructor.name);
+        //console.log(data.constructor.name);
         return data;
     }
     catch (err) {
         console.log(err);
     }
 }
-
+/*
+Crea una funció que guardi els fitxers del punt anterior, ara encriptats 
+amb l'algoritme aes-192-cbc, i esborri els fitxers inicials.
+*/
 async function encryptArxiu(filename) {
-    
+
     encodeArxiu(filename);
     let filenameHex = filename + `hex`;
-    let filenamebase64 = filename + `base64`; 
+    let filenamebase64 = filename + `base64`;
     let data, dataHex, datab64;
-    data = await getDataOut(data, filename);
-    dataHex = await getDataOut(dataHex, filenameHex);
-    datab64 = await getDataOut(datab64, filenamebase64); 
+    data = await getDataOut(data, filename); //Si no els hi poso els await, el programa se segueix executant abans de resoldre's
+    dataHex = await getDataOut(dataHex, filenameHex); //Les promises i les variables data encara no son Buffer sino Promise
+    datab64 = await getDataOut(datab64, filenamebase64);
 
     let hash = crypto.createHash('sha256'); //per encriptar haig de crear un objecte Hash
-    data = hash.update(data).digest();
+    data = hash.update(data).digest('hex');
     fs.writeFile(filename + "hash", data, function (err) {
-        if (err)
-        {
+        if (err) {
             console.log(err);
             return;
         }
     });
     hash = crypto.createHash('sha256'); //i sembla que l'haig de crear cada cop
     dataHex = hash.update(dataHex).digest('hex');
-    fs.writeFile(filenameHex + `hash`, dataHex , function (err) {
+    fs.writeFile(filenameHex + `hash`, dataHex, function (err) {
         if (err) {
             console.log(err);
             return;
         }
     });
     hash = crypto.createHash('sha256');
-    datab64 = hash.update(datab64).digest('base64');    
-    fs.writeFile(filenamebase64 + `hash`, datab64 , function (err) {
+    datab64 = hash.update(datab64).digest('hex');
+    fs.writeFile(filenamebase64 + `hash`, datab64, function (err) {
         if (err) {
             console.log(err);
             return;
         }
     });
-    exec(`rm ${filename}; rm ${filenameHex}; rm ${filenamebase64}` ); //exec funciona encara que 
-    //no li posi el callback per manejar els stdout, stderr i tal?
+    exec(`${rmCommand} ${filename}; ${rmCommand} ${filenameHex}; ${rmCommand} ${filenamebase64} `); //exec funciona encara que 
+    //no li posi el callback per manejar els stdout, stderr i tal
 
 }
-encryptArxiu('./nouArxiu.txt');
+
+const frase1 = `123`;
+const filename1 = `nouArxiu.txt`;
+
+escriuArxiu(frase1, filename1);
+compressArxiu(filename1);
+//encodeArxiu(filename1);
+encryptArxiu(filename1);
+
+//de vegades (i altres no) em llença un error i para l'execucio pq intenta fer encryptArxiu quan encara no s'ha creat nouArxiu
+
+/* Crea una altra funció que desencripti i descodifiqui els fitxers de 
+l'apartat anterior tornant a generar una còpia de l'inicial. */
+
+/*
+TODO
+Com faig pq escriu, compress i encrypt s'executin sempre en l'ordre que vull?
+Mirar com utilitzar crypto amb el aes-192-cbc. sha256 es un hash i no es pot desencriptar :(
+*/
 
