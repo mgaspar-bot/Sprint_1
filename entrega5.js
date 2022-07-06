@@ -190,8 +190,8 @@ async function encryptArxiu(filename) {
     let filenameHex = filename + `hex`;
     let filenamebase64 = filename + `base64`;
     let data, dataHex, datab64;
-    data = await getDataOut(data, filename); //Si no els hi poso els await, el programa se segueix executant abans de resoldre's
-    dataHex = await getDataOut(dataHex, filenameHex); //Les promises i les variables data encara no son Buffer sino Promise
+    data = await getDataOut(data, filename); //Si no els hi poso els await, el programa se segueix executant abans de resoldre's les
+    dataHex = await getDataOut(dataHex, filenameHex); // promises i les variables data encara no son Buffer sino Promise
     datab64 = await getDataOut(datab64, filenamebase64);
 
     let hash = crypto.createHash('sha256'); //per encriptar haig de crear un objecte Hash
