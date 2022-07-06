@@ -156,7 +156,6 @@ function encodeArxiu(filename) {
     });
 }
 
-
 const crypto = require('crypto');
 
 function readPromise(filename) {
@@ -218,7 +217,8 @@ async function encryptArxiu(filename) {
             return;
         }
     });
-    exec(`${rmCommand} ${filename}; ${rmCommand} ${filenameHex}; ${rmCommand} ${filenamebase64} `); //exec funciona encara que 
+    exec(`${rmCommand} ${filename}; ${rmCommand} ${filenameHex}; ${rmCommand} ${filenamebase64} `); 
+    //exec funciona encara que 
     //no li posi el callback per manejar els stdout, stderr i tal
 
 }
@@ -231,7 +231,8 @@ compressArxiu(filename1);
 //encodeArxiu(filename1);
 encryptArxiu(filename1);
 
-//de vegades (i altres no) em llença un error i para l'execucio pq intenta fer encryptArxiu quan encara no s'ha creat nouArxiu
+//de vegades si no existeix nouArxiu.txt em llença un error i es para pq el encrypt prova de llegir-lo
+//quan encara no existeix
 
 /* Crea una altra funció que desencripti i descodifiqui els fitxers de 
 l'apartat anterior tornant a generar una còpia de l'inicial. */
@@ -241,4 +242,3 @@ TODO
 Com faig pq escriu, compress i encrypt s'executin sempre en l'ordre que vull?
 Mirar com utilitzar crypto amb el aes-192-cbc. sha256 es un hash i no es pot desencriptar :(
 */
-
