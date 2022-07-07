@@ -263,11 +263,6 @@ Mirar com utilitzar crypto amb el aes-192-cbc. No sabia la diferencia pero sha25
  i no es pot desencriptar :(
 */
 
-/*
-El youtuber engineer man diu
-"Every time node has to reach out to the OS it does
-so asynchronousy"
-*/
 
 
 
