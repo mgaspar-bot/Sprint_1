@@ -54,7 +54,7 @@ function hola() {
     console.log(`hola!`);
     setTimeout(hola, 1000);
 };
-//hola();
+//hola(); TODO DESCOMENTAR AIXO ABANS D'ENTREGAR
 
 /*
 - Exercici 2
@@ -71,7 +71,7 @@ if (platform === 'win32') {
             console.log('Ha habido algun tipo de error');
             return;
         }
-        console.log(stdout);
+        //console.log(stdout);   TODO DESCOMENTAR AIXO ABANS D'ENTREGAR
     });
 }
 else {
@@ -183,7 +183,8 @@ async function getDataOut(container, filename) {
 Crea una funció que guardi els fitxers del punt anterior, ara encriptats 
 amb l'algoritme aes-192-cbc, i esborri els fitxers inicials.
 */
-async function encryptArxiu(filename) {
+async function hashArxiu(filename) 
+{
 
     encodeArxiu(filename);
     let filenameHex = filename + `hex`;
@@ -217,21 +218,67 @@ async function encryptArxiu(filename) {
             return;
         }
     });
-    exec(`${rmCommand} ${filename}; ${rmCommand} ${filenameHex}; ${rmCommand} ${filenamebase64} `); 
+    exec(`${rmCommand} ${filename}; ${rmCommand} ${filenameHex}; ${rmCommand} ${filenamebase64} `);
     //exec funciona encara que 
     //no li posi el callback per manejar els stdout, stderr i tal
-
 }
 
+async function encryptArxiu(filename)
+{
+    /* encodeArxiu(filename);
+    let filenameHex = filename + `hex`;
+    let filenamebase64 = filename + `base64`; */
+    let data;
+    data = await getDataOut(data, filename);
+
+    /* let dataHex, datab64;
+    dataHex = await getDataOut(dataHex, filenameHex);
+    datab64 = await getDataOut(datab64, filenamebase64);
+ */
+    //Ara tinc tres Buffer amb les dades en diferents encodings
+    
+    //sabem quins cypher te el module pq podem fer:
+    //crypto.getCiphers().forEach((i) => {console.log(`${i}`);})
+
+    let iv = crypto.randomBytes(16);//aes192 necessita un iv de 16 bytes
+    //aixi es síncron, si el crides amb un callback (err, buf) es asíncron
+
+    let key = crypto.randomBytes(24); //intento crear una clau automaticament, aes192 en necessita una de 192 bits
+
+
+    var cipher = crypto.createCipheriv('aes-192-cbc', key, iv);
+    let encrypted = cipher.update(data, 'hex'); //crec que l'has d'utilitzar mes cops per afegir dades grosses potser tants cops com blocs de 16 bytes tinguis?
+    encrypted += cipher.final('hex');
+
+    console.log(`encrypted: ${encrypted}
+    ${typeof{encrypted}} ${encrypted.constructor.name}`);
+
+    var decipher = crypto.createDecipheriv('aes-192-cbc', key, iv);
+    let decrypted = decipher.update(encrypted, 'hex', 'utf16le'); //es millor posar utf16 pq es el encoding de js, amb altres tambe funciona pero se li afegeixen coses random al decyphered
+    decrypted += decipher.final('utf16le');
+
+    console.log(`decrypted: ${decrypted}
+    ${typeof{decrypted}} ${decrypted.constructor.name}`); //sembla afegir un newline al final del string
+
+    fs.writeFile(`decrypted.txt`, decrypted, (err) => {
+        if (err) console.log(err); return;
+    });
+}
+
+
+/*
 const frase1 = `123`;
 const filename1 = `nouArxiu.txt`;
 
 escriuArxiu(frase1, filename1);
 compressArxiu(filename1);
 //encodeArxiu(filename1);
-encryptArxiu(filename1);
+hashArxiu(filename1);
+*/
 
-//de vegades si no existeix nouArxiu.txt em llença un error i es para pq el encrypt prova de llegir-lo
+encryptArxiu('hola.txt'); //cal una key-length de 128 bits (16 bytes), com que js usa UTF-16 aixo son 8 chars
+
+//de vegades si no existeix nouArxiu.txt em llença un error i es para pq el hash prova de llegir-lo
 //quan encara no existeix
 
 /* Crea una altra funció que desencripti i descodifiqui els fitxers de 
@@ -239,6 +286,13 @@ l'apartat anterior tornant a generar una còpia de l'inicial. */
 
 /*
 TODO
-Com faig pq escriu, compress i encrypt s'executin sempre en l'ordre que vull?
-Mirar com utilitzar crypto amb el aes-192-cbc. sha256 es un hash i no es pot desencriptar :(
+Com faig pq escriu, compress i hash s'executin sempre en l'ordre que vull?
+Mirar com utilitzar crypto amb el aes-192-cbc. No sabia la diferencia pero sha256 es un hash
+ i no es pot desencriptar :(
+*/
+
+/*
+El youtuber engineer man diu
+"Every time node has to reach out to the OS it does
+so asynchronousy"
 */
