@@ -133,7 +133,7 @@ getEmployee(3)
             console.log(`He trobat l'empleat ${empTrobat.name}`);
 			getSalary(empTrobat)
                 .then( (sTrobat) => {console.log(`Te un salari de: ${sTrobat.salary}`); } ) 
-                .catch( (err) => {console.log(err);} ); } )
+                .catch( (err) => {console.log(err);} ); } ) //no cal
 		.catch( (err) => {console.log(err.message);} );
  
 /*
