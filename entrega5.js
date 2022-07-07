@@ -163,7 +163,6 @@ function readPromise(filename) {
     return new Promise((res, rej) => {
         fs.readFile(filename, (err, data) => { //si el read tira un error mel agafa el catch de la promise?
             if (err) {
-                console.log(err.message);
                 rej(new Error(`Fallo la lectura`));
             }
             res(data);
@@ -216,6 +215,12 @@ async function encryptArxiu(filename)
     var cipher = crypto.createCipheriv('aes-192-cbc', key, iv);
     let encrypted = cipher.update(data, 'hex'); //crec que l'has d'utilitzar mes cops per afegir dades grosses potser tants cops com blocs de 16 bytes tinguis?
     encrypted += cipher.final('hex');
+    /*
+    aquest 'hex' es el encoding de sortida, el d'entrada es pot especificar pero
+    es opcional, si nomes fiques dos parametres enten que el que li dones es el
+    de sortida. Si l'especifiqués en aquest cas com que dataHex es Buffer i no string, 
+    comprovara l'encoding de Buffer (?) i ignorara el parametre
+    */
 
     console.log(`encrypted: ${encrypted}
     ${typeof{encrypted}} ${encrypted.constructor.name}`);
