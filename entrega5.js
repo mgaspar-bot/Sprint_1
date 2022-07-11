@@ -264,4 +264,4 @@ escriuArxiu(frase1, filename1);
 
 //Nivell 3:
 // encodeArxiu(filename1);
-encryptArxiu(filename1);
+// encryptArxiu(filename1);
