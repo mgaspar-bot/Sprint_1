@@ -4,27 +4,25 @@ Crea una nova funció asíncrona que cridi a una altra que retorni una
  Promise que efectuï la seva funció resolve() després de 2 segons de 
  la seva invocació.
 */
+module.exports = {delayedResolve, delayedExec};
 
-function delayedResolve( )  //pots usar timers fora de async functions sembla ser
+function delayedResolve( ) 
 {
     console.log(`Començo a esperar per resoldre'm...`);
 	return new Promise ((res, rej) => {
-		setTimeout( () =>  res(`M'he resolt!`) , 2000 ); //el parametre callback de setTimeout ha de retornar la crida perque s'activi el timer (?)
-	} );
+		setTimeout( () =>  res(`M'he resolt!`) , 2000 );
+    	});
 }
-
 async function delayedExec ( ) 
 {
 	try
 	{   
-		const str = await delayedResolve();
+		const str = await delayedResolve('h');
 		console.log(str);
 	}
 	catch (err)
 	{
 		console.log(err);
 	}
-	
 }
-
-delayedExec();
+// delayedExec();
