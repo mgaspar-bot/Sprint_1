@@ -5,19 +5,20 @@ Crea una nova funció asíncrona que cridi a una altra que retorni una
  la seva invocació.
 */
 module.exports = {delayedResolve, delayedExec};
+// export {delayedResolve as default, delayedExec};
 
-function delayedResolve( ) 
+function delayedResolve()
 {
     console.log(`Començo a esperar per resoldre'm...`);
 	return new Promise ((res, rej) => {
 		setTimeout( () =>  res(`M'he resolt!`) , 2000 );
     	});
 }
-async function delayedExec ( ) 
+async function delayedExec (fun) 
 {
 	try
 	{   
-		const str = await delayedResolve('h');
+		const str = await fun();
 		console.log(str);
 	}
 	catch (err)
@@ -25,4 +26,8 @@ async function delayedExec ( )
 		console.log(err);
 	}
 }
-// delayedExec();
+// delayedExec(delayedResolve);
+
+/*
+Per fer el testing cal fer que delayedExec rebi delayedResolve com a callback per poder-li passar la mock function
+*/
