@@ -41,6 +41,3 @@ function args() {
 args();
 args(1);
 args(1,'hola', 56, true);
-
-
-

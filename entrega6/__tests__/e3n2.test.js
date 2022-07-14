@@ -21,12 +21,12 @@ describe(`Tests del getEmployee`, () => {
     test(`Si el id no es un number, llença el error 'No hi ha..'`, () => {
         return expect(getEmployee('soc una string')).rejects.toThrow('No hi ha cap empleat amb aquest id');
         /* Si no troba la substring en el error.message (.toThrow('coses que no hi son al message' );)
-        no es que no passi el test, es que no
+        no es que no passi el test, es que
         deixa d'executar-se pq un modul de jest llença un error. Perque??
         
         era pq no havia posat el return!! no acabo d'entendre aixo de que de vegades
         s'hagi de retornar les Promises
-         */    
+         */
     });
     test(`Si rep mes d'un parametre nomes busca el primer`, async () => {
         let employee = await getEmployee(2,7);
@@ -56,7 +56,7 @@ describe(`Tests del getSalary`, () => {
     });
     test(`Espera que es resolgui la promise i comprova que es el salari adequat`, async () => {
         let salari = await getSalary(employees[1]);
-        expect(salari).toBeInstanceOf(Object);
+        expect(typeof salari).toBe('object');   //typeof != toBeInstanceOf . Menys null i undefined, casi tot es una instancia de object
         expect(salari).toMatchObject(salaries[1]);
     });
     test(`Si el employee no te salari, llença el error de no trobat`, () => {  //He afegit el empleat Marc Gaspar. No té salari xD
@@ -94,14 +94,14 @@ describe(`Tests del getSalary`, () => {
         return expect(getSalary(voidObject)).rejects.toThrowError('Aquest empleat no te salari pobre');
     });//Perque em llença un error de no trobat i no un Cannot read properties of...
 
-    test(`Si el que rep cap parametre llença un Cannot read properties...`, () => {
+    test(`Si no rep cap parametre llença un Cannot read properties...`, () => {
         return expect(getSalary()).rejects.toThrow('Cannot read properties of undefined');
         /* getSalary().catch( (error) => {
             expect(error).toBeInstanceOf(TypeError);
             expect(error.message).toBe(`Cannot read properties of undefined (reading 'id')`);
         }); */
-    }); //Undefined no es un Object, potser es que el Cannot read properties... es un 'aixo hauria de ser un punter pero no puc dereferenciar-lo'
-    test(`Si el que rep es un null (que tampoc es un objecte), llença un Cannot read properties...`, () => {
+    }); //Undefined i null no son un Object, potser es que el Cannot read properties... es un 'aixo hauria de ser un punter pero no puc dereferenciar-lo'
+    test(`Si el que rep es un null, llença un Cannot read properties...`, () => {
         return expect(getSalary(null)).rejects.toThrow('Cannot read properties of null');
     });
     test(`Si rep mes d'un parametre, es comporta com si només hagués rebut el primer`, () => {
