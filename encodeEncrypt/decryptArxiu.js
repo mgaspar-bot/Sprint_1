@@ -15,7 +15,8 @@ var filename = process.argv[2];
         decipher.on('readable', () => {
             let chunk;
             while (null !== (chunk = decipher.read())) {
-              decrypted += chunk.toString('utf-8');
+                console.log(chunk.toString('utf-8'));
+                decrypted += chunk.toString('utf-8');
             }
         });
         decipher.on('end', () => {

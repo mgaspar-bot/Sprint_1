@@ -18,6 +18,7 @@ if (require('os').platform() === 'win32') {
         let password = "123456789012345678901234"; let key = crypto.scryptSync(password, 'salt', 24);
         
         var cipher = crypto.createCipheriv('aes-192-cbc', key, iv);
+        // console.log(Object.getOwnPropertyNames(cipher));
         let encrypted = cipher.update(data); //if you dont specify the inputEncoding arg, data needs to be a Buffer or any other object qhich contains info on it
         encrypted += cipher.final('hex');
         await fsp.writeFile(filename+'ENCRYPTED',encrypted);
