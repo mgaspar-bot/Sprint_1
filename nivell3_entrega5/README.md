@@ -19,3 +19,4 @@ el encrypt esborrara el arxiu original i deixarà l'encriptat i el
 decrypt generarà (o sobreescriura) un arxiu 'lastDecryption'
 si li passes 'base64' o 'hex' com a segon argument, també
 desencodara el output.
+"tot" es un script de bash que hauria de provar totes les funcions

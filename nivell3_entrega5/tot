@@ -1,6 +1,16 @@
 #!/bin/bash
 
 echo hola > arxiu.txt
+echo "He creat un arxiu.txt que conté:" && echo | cat arxiu.txt
 node encodeArxiu.js arxiu.txt
+echo "
+he creat arxiu.txtb64 i arxiu.txthex amb els encodings corresponents"
+echo "base64:" && echo | cat arxiu.txtb64
 node encryptArxiu.js arxiu.txtb64
+echo "
+
+he encriptat el arxiu.txtb64, ara és arxiu.txtb64ENCRYPTED:" && echo |cat arxiu.txtb64ENCRYPTED
 node decryptArxiu.js arxiu.txtb64ENCRYPTED base64
+echo "
+
+l'he desencriptat i desencodat, ara lastDecryption conté:" && echo|cat lastDecryption
