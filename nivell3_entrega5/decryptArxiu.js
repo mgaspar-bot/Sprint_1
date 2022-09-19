@@ -3,6 +3,7 @@ const fsp = require('fs').promises;
 const fs = require('fs');
 
 var filename = process.argv[2];
+var encoding = process.argv[3];
 
 (async function decryptArxiu (filename) {
     try {
@@ -15,11 +16,19 @@ var filename = process.argv[2];
         decipher.on('readable', () => {
             let chunk;
             while (null !== (chunk = decipher.read())) {
-                console.log(chunk.toString('utf-8'));
+                // console.log(chunk.toString('utf-8'));
                 decrypted += chunk.toString('utf-8');
             }
         });
         decipher.on('end', () => {
+            if (encoding === 'base64') {
+                decrypted = Buffer.from(decrypted, 'base64');
+                decrypted = decrypted.toString('utf-8');
+            } else if (encoding === 'hex') {
+                decrypted = Buffer.from(decrypted, 'hex');
+                decrypted = decrypted.toString('utf-8'); 
+            }
+            
             fs.writeFileSync('lastDecryption', decrypted)
         });
         decipher.write(data.toString(), 'hex'); //el que estava fallant es que data NO PODIA ser Buffer, i ho era

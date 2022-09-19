@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo hola > arxiu.txt
+node encodeArxiu.js arxiu.txt
+node encryptArxiu.js arxiu.txtb64
+node decryptArxiu.js arxiu.txtb64ENCRYPTED base64
